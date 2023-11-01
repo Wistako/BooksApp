@@ -16,7 +16,7 @@
             bookList: '.books-panel .books-list',
         },
         book:{
-            image: '.book__image img',
+            image: '.book__image',
         }
     };
     // const classNames = {
@@ -32,29 +32,34 @@
         constructor(data){
             const thisBook = this;
             thisBook.data = data;
-            thisBook.getElements();
             thisBook.renderBooks();
+            thisBook.getElements();
             thisBook.initActions();
+        }
+        renderBooks(){
+            const thisBook = this;
+            const bookList = document.querySelector(select.booksPanel.bookList);
+            const generatedHTML = templates.book(thisBook.data);
+            thisBook.element = utils.createDOMFromHTML(generatedHTML);
+            bookList.appendChild(thisBook.element);
         }
         getElements(){
             const thisBook = this;
             thisBook.DOM = {};
-            thisBook.DOM.bookList = document.querySelector(select.booksPanel.bookList);
-        }
-        renderBooks(){
-            const thisBook = this;
-            const generatedHTML = templates.book(thisBook.data);
-            thisBook.element = utils.createDOMFromHTML(generatedHTML);
-            thisBook.DOM.bookList.appendChild(thisBook.element);
+            thisBook.DOM.image = thisBook.element.querySelector(select.book.image);
         }
         initActions(){
-
+            const thisBook = this;
+            thisBook.DOM.image.addEventListener('dbclick', () => {
+                thisBook.toggleFavorite();
+            });
         }
         toggleFavorite(){
-            
+            const thisBook = this;
+            thisBook.DOM.image.classList.toggle('fovorite');
         }
-    
     }
+
 
 
     const app = {
