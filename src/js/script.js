@@ -84,8 +84,10 @@
       thisApp.initActions();
     },
     initBooks: function(){
+      const thisApp = this;
+      thisApp.books = [];
       for (const data of dataSource.books){
-        new Book(data);
+        thisApp.books.push(new Book(data));
       }
     },
     getElements: function(){
@@ -104,14 +106,13 @@
         e.preventDefault();
       });
       thisApp.DOM.filtersForm.addEventListener('click', (e) =>{
-        e.preventDefault();
-        thisApp.filter(e);
-          
+        thisApp.filterValue(e);
+        thisApp.filterBooks();
       });
     },
     toggleFavorite(e){
       const thisApp = this;
-      const clickedImage = e.target.parentNode.parentElement;
+      const clickedImage = e.target.offsetParent;
       const id = clickedImage.getAttribute('data-id');
       clickedImage.classList.toggle('favorite');
       const flag = clickedImage.classList.contains('favorite') && !thisApp.favoriteBooks.includes(id);
@@ -122,8 +123,37 @@
         thisApp.favoriteBooks.splice(index, 1);
       }
     },
-    filter(e){
-
+    filterValue(e){
+      const thisApp = this;
+      const clickedFiltr = e.target;
+      const flag = clickedFiltr.tagName == 'INPUT' && clickedFiltr.name == 'filter' && clickedFiltr.type == 'checkbox';
+      const filtrFlag = clickedFiltr.checked && !thisApp.filters.includes(clickedFiltr.value);
+      if(flag && filtrFlag){
+        thisApp.filters.push(clickedFiltr.value);
+      } else if (flag && !filtrFlag){
+        const index = thisApp.filters.indexOf(clickedFiltr.value);
+        thisApp.filters.splice(index, 1);
+      }
+      console.log(thisApp.filters);
+    },
+    filterBooks(){
+      const thisApp = this;
+      for(const book of thisApp.books){
+        const details = book.data.details;
+        let flag = false;
+        for(const detail in details){
+          if(thisApp.filters.includes(detail) && !details[detail]){
+            flag = true;   
+          }
+        }
+        if(flag){
+          book.DOM.image.classList.add('hidden');
+        } else {
+          book.DOM.image.classList.remove('hidden');
+        }
+        flag = false;
+      }
+      
     },
     favoriteBooks: [],
     filters: [],
