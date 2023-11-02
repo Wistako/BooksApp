@@ -34,7 +34,7 @@
             thisBook.data = data;
             thisBook.renderBooks();
             thisBook.getElements();
-            thisBook.initActions();
+            // thisBook.initActions();
         }
         renderBooks(){
             const thisBook = this;
@@ -48,16 +48,16 @@
             thisBook.DOM = {};
             thisBook.DOM.image = thisBook.element.querySelector(select.book.image);
         }
-        initActions(){
-            const thisBook = this;
-            thisBook.DOM.image.addEventListener('dblclick', function() {
-                thisBook.toggleFavorite();
-            });
-            thisBook.DOM.image.addEventListener('click', (event) => {
-                event.preventDefault();
-            });
-            console.log(thisBook.DOM.image);
-        }
+        // initActions(){
+        //     const thisBook = this;
+        //     thisBook.DOM.image.addEventListener('dblclick', function() {
+        //         thisBook.toggleFavorite();
+        //     });
+        //     thisBook.DOM.image.addEventListener('click', (event) => {
+        //         event.preventDefault();
+        //     });
+        //     console.log(thisBook.DOM.image);
+        // }
         toggleFavorite(){
             const thisBook = this;
             const id = thisBook.data.id;
@@ -80,11 +80,42 @@
             const thisApp = this;
             console.log('*** App Starting ***');
             thisApp.initBooks();
+            thisApp.getElements();
+            thisApp.initActions();
         },
         initBooks: function(){
             for (const data of dataSource.books){
                 new Book(data);
             }
+        },
+        getElements: function(){
+            const thisApp = this;
+            thisApp.DOM = {};
+            thisApp.DOM.bookList = document.querySelector(select.booksPanel.bookList);
+            thisApp.DOM.booksImage = thisApp.DOM.bookList.querySelectorAll(select.book.image);
+            console.log(thisApp.DOM.booksImage);
+        },
+        initActions: function(){
+            const thisApp = this;
+            thisApp.DOM.bookList.addEventListener('dblclick', (e) =>{
+                const thisApp = this;
+                const clickedImage = e.target.parentNode.parentElement;
+                const id = clickedImage.getAttribute('data-id');
+                clickedImage.classList.toggle('favorite');
+                const flag = clickedImage.classList.contains('favorite') && !thisApp.favoriteBooks.includes(id);
+                if( flag ){
+                    thisApp.favoriteBooks.push(id);
+                } else if (!flag){
+                    const index = thisApp.favoriteBooks.indexOf(id);
+                    thisApp.favoriteBooks.splice(index, 1);
+                }
+            });
+            thisApp.DOM.bookList.addEventListener('click', (e) =>{
+                e.preventDefault();
+            });
+        },
+        toggleFavorite(){
+            
         },
         favoriteBooks: [],
     };
