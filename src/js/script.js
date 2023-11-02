@@ -50,13 +50,26 @@
         }
         initActions(){
             const thisBook = this;
-            thisBook.DOM.image.addEventListener('dbclick', () => {
+            thisBook.DOM.image.addEventListener('dblclick', function() {
                 thisBook.toggleFavorite();
             });
+            thisBook.DOM.image.addEventListener('click', (event) => {
+                event.preventDefault();
+            });
+            console.log(thisBook.DOM.image);
         }
         toggleFavorite(){
             const thisBook = this;
-            thisBook.DOM.image.classList.toggle('fovorite');
+            const id = thisBook.data.id;
+            thisBook.DOM.image.classList.toggle('favorite');
+            const flag = thisBook.DOM.image.classList.contains('favorite') && !app.favoriteBooks.includes(thisBook.data.id);
+            if( flag ){
+                app.favoriteBooks.push(id);
+            } else if (!flag){
+                const index = app.favoriteBooks.indexOf(id);
+                app.favoriteBooks.splice(index, 1);
+            }
+            console.log(app.favoriteBooks);
         }
     }
 
@@ -72,7 +85,8 @@
             for (const data of dataSource.books){
                 new Book(data);
             }
-        }
+        },
+        favoriteBooks: [],
     };
     app.init();
 }
